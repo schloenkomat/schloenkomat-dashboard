@@ -310,9 +310,25 @@ class schloenkomatDashboardStrategyEditor extends HTMLElement {
       'power-flow-card'
     ];
 
+    const waitForDefinitionWithTimeout = async (tagName, timeoutMs = 1500) => {
+      if (customElements.get(tagName)) {
+        return true;
+      }
+
+      return await Promise.race([
+        customElements.whenDefined(tagName).then(() => true),
+        new Promise((resolve) => {
+          window.setTimeout(() => resolve(false), timeoutMs);
+        })
+      ]);
+    };
+
     for (const tagName of elementNamesToTry) {
       try {
-        await customElements.whenDefined(tagName).catch(() => null);
+        const isDefined = await waitForDefinitionWithTimeout(tagName, 1500);
+        if (!isDefined) {
+          continue;
+        }
 
         const elementClass = customElements.get(tagName);
         if (!elementClass) {
