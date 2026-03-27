@@ -293,16 +293,22 @@ class schloenkomatDashboardStrategyEditor extends HTMLElement {
   }
 
   _getPowerFlowEditorSeedConfig() {
-    const existingConfig = this._config.power_flow_card_config || {};
-    const hasEntities =
-      existingConfig.entities &&
-      typeof existingConfig.entities === 'object' &&
-      Object.keys(existingConfig.entities).length > 0;
+    const rawConfig = this._config.power_flow_card_config || {};
 
-    if (hasEntities) {
+    const sanitizedConfig = Object.fromEntries(
+      Object.entries(rawConfig).filter(([, value]) => value !== undefined)
+    );
+
+    const hasValidEntities =
+      sanitizedConfig.entities &&
+      typeof sanitizedConfig.entities === 'object' &&
+      !Array.isArray(sanitizedConfig.entities) &&
+      Object.keys(sanitizedConfig.entities).length > 0;
+
+    if (hasValidEntities) {
       return {
         type: 'custom:power-flow-card-plus',
-        ...existingConfig
+        ...sanitizedConfig
       };
     }
 
@@ -311,14 +317,16 @@ class schloenkomatDashboardStrategyEditor extends HTMLElement {
       Object.keys(this._hass?.states || {})[0] ||
       'sensor.placeholder';
 
+    const { entities: _ignoredEntities, ...restConfig } = sanitizedConfig;
+
     return {
       type: 'custom:power-flow-card-plus',
+      ...restConfig,
       entities: {
         grid: {
           entity: fallbackEntity
         }
-      },
-      ...existingConfig
+      }
     };
   }
 
