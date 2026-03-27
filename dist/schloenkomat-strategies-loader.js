@@ -14,9 +14,8 @@ import './cards/simon42-summary-card.js';
 import './cards/simon42-lights-group-card.js';
 import './cards/simon42-covers-group-card.js';
 
-// Lade Core-Module
+// Lade Core-Modul
 import './core/schloenkomat-dashboard-strategy.js';
-import './core/schloenkomat-dashboard-strategy-editor.js';
 
 // Lade View-Module
 import './views/simon42-view-room.js';
