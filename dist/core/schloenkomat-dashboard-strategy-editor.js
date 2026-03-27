@@ -292,18 +292,38 @@ class schloenkomatDashboardStrategyEditor extends HTMLElement {
     }
   }
 
-  async _createPowerFlowCardEditor() {
+  _getPowerFlowEditorSeedConfig() {
     const existingConfig = this._config.power_flow_card_config || {};
-    const hasExistingConfig = Object.keys(existingConfig).length > 0;
+    const hasEntities =
+      existingConfig.entities &&
+      typeof existingConfig.entities === 'object' &&
+      Object.keys(existingConfig.entities).length > 0;
 
-    const fullCardConfig = hasExistingConfig
-      ? {
-          type: 'custom:power-flow-card-plus',
-          ...existingConfig
+    if (hasEntities) {
+      return {
+        type: 'custom:power-flow-card-plus',
+        ...existingConfig
+      };
+    }
+
+    const fallbackEntity =
+      Object.keys(this._hass?.states || {}).find((entityId) => entityId.startsWith('sensor.')) ||
+      Object.keys(this._hass?.states || {})[0] ||
+      'sensor.placeholder';
+
+    return {
+      type: 'custom:power-flow-card-plus',
+      entities: {
+        grid: {
+          entity: fallbackEntity
         }
-      : {
-          type: 'custom:power-flow-card-plus'
-        };
+      },
+      ...existingConfig
+    };
+  }
+
+  async _createPowerFlowCardEditor() {
+    const fullCardConfig = this._getPowerFlowEditorSeedConfig();
 
     const elementNamesToTry = [
       'power-flow-card-plus',
@@ -330,29 +350,18 @@ class schloenkomatDashboardStrategyEditor extends HTMLElement {
           continue;
         }
 
-        const elementClass = customElements.get(tagName);
-        if (!elementClass) {
-          continue;
-        }
-
         let editor = null;
 
-        if (typeof elementClass.getConfigElement === 'function') {
+        const elementClass = customElements.get(tagName);
+        if (elementClass && typeof elementClass.getConfigElement === 'function') {
           editor = await elementClass.getConfigElement();
         }
 
-        if (!editor) {
-          const testElement = document.createElement(tagName);
+        if (!editor && window.loadCardHelpers) {
+          const helpers = await window.loadCardHelpers();
+          const card = await helpers.createCardElement(fullCardConfig);
+          const ctor = card?.constructor;
 
-          if (typeof testElement.setConfig === 'function') {
-            testElement.setConfig(fullCardConfig);
-          }
-
-          if ('hass' in testElement) {
-            testElement.hass = this._hass;
-          }
-
-          const ctor = testElement.constructor;
           if (ctor && typeof ctor.getConfigElement === 'function') {
             editor = await ctor.getConfigElement();
           }
