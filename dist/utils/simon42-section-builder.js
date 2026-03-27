@@ -266,9 +266,42 @@ export function createAreasSection(visibleAreas, groupByFloors = false, hass = n
  * @param {boolean} showWeather - Ob Wetter-Karte angezeigt werden soll
  * @param {boolean} showEnergy - Ob Energie-Dashboard angezeigt werden soll
  * @param {boolean} groupByFloors - Ob nach Etagen gruppiert wird
+ * @param {Object} config - Dashboard-Konfiguration
  * @returns {Array|Object|null} Section(s) oder null wenn keine Karten angezeigt werden
  */
 export function createWeatherEnergySection(weatherEntity, showWeather, showEnergy, groupByFloors = false, config = {}) {
+  const energyDashboardMode = config.energy_dashboard_mode || "energy_distribution";
+
+  const buildEnergyCards = () => {
+    if (energyDashboardMode === "power_flow_card") {
+      return [
+        {
+          type: "heading",
+          heading: "Energiefluss",
+          heading_style: "title",
+          icon: "mdi:solar-power"
+        },
+        {
+          type: "custom:power-flow-card-plus",
+          ...(config.power_flow_card_config || {})
+        }
+      ];
+    }
+
+    return [
+      {
+        type: "heading",
+        heading: "Energie",
+        heading_style: "title",
+        icon: "mdi:lightning-bolt"
+      },
+      {
+        type: "energy-distribution",
+        link_dashboard: true
+      }
+    ];
+  };
+
   // Wenn Etagen-Gruppierung aktiv: Separate Sections zurückgeben
   if (groupByFloors) {
     const sections = [];
@@ -297,29 +330,17 @@ export function createWeatherEnergySection(weatherEntity, showWeather, showEnerg
     if (showEnergy) {
       sections.push({
         type: "grid",
-        cards: [
-          {
-            type: "heading",
-            heading: "Energiefluss",
-            heading_style: "title",
-            icon: "mdi:solar-power"
-          },
-          {
-            type: "custom:power-flow-card-plus",
-            ...(config.power_flow_card_config || {})
-          }
-        ]
+        cards: buildEnergyCards()
       });
     }
     
-    // Gib leeres Array zurück wenn keine Sections vorhanden
     return sections;
   }
   
-  // Standard: Alles in einer Section (wie bisher)
+  // Standard: Alles in einer Section
   const cards = [];
   
-  // Füge Weather Forecast hinzu, wenn eine Weather-Entität gefunden wurde UND aktiviert
+  // Wetter
   if (weatherEntity && showWeather) {
     cards.push({
       type: "heading",
@@ -334,21 +355,12 @@ export function createWeatherEnergySection(weatherEntity, showWeather, showEnerg
     });
   }
   
-  // Energie-Dashboard (nur wenn aktiviert)
+  // Energie
   if (showEnergy) {
-    cards.push({
-      type: "heading",
-      heading: "Energiefluss",
-      heading_style: "title",
-      icon: "mdi:solar-power"
-    });
-    cards.push({
-      type: "custom:power-flow-card-plus",
-      ...(config.power_flow_card_config || {})
-    });
+    cards.push(...buildEnergyCards());
   }
   
-  // Gib null zurück wenn keine Karten vorhanden (verhindert leere Section)
+  // Keine Karten => keine Section
   if (cards.length === 0) {
     return null;
   }
