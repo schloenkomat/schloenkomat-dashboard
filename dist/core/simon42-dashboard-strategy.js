@@ -79,7 +79,13 @@ class Simon42DashboardStrategy {
     const areasSections = createAreasSection(visibleAreas, groupByFloors, hass);
 
     // Erstelle Wetter & Energie Section(s)
-    const weatherEnergySection = createWeatherEnergySection(weatherEntity, showWeather, showEnergy, groupByFloors);
+    const weatherEnergySection = createWeatherEnergySection(
+      weatherEntity,
+      showWeather,
+      showEnergy,
+      groupByFloors,
+      config
+    );
     
     // Erstelle Sections für den Haupt-View
     const overviewSections = [
