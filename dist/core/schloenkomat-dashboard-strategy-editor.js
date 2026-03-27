@@ -1,5 +1,5 @@
 // ====================================================================
-// schloenkomat DASHBOARD STRATEGY - EDITOR
+// DASHBOARD STRATEGY - EDITOR
 // ====================================================================
 import { getEditorStyles } from './editor/schloenkomat-editor-styles.js';
 import { renderEditorHTML } from './editor/schloenkomat-editor-template.js';
@@ -312,17 +312,36 @@ class schloenkomatDashboardStrategyEditor extends HTMLElement {
 
     for (const tagName of elementNamesToTry) {
       try {
-        const elementClass = customElements.get(tagName);
+        await customElements.whenDefined(tagName).catch(() => null);
 
+        const elementClass = customElements.get(tagName);
         if (!elementClass) {
           continue;
         }
 
-        if (typeof elementClass.getConfigElement !== 'function') {
-          continue;
+        let editor = null;
+
+        if (typeof elementClass.getConfigElement === 'function') {
+          editor = await elementClass.getConfigElement();
         }
 
-        const editor = await elementClass.getConfigElement();
+        if (!editor) {
+          const testElement = document.createElement(tagName);
+
+          if (typeof testElement.setConfig === 'function') {
+            testElement.setConfig(fullCardConfig);
+          }
+
+          if ('hass' in testElement) {
+            testElement.hass = this._hass;
+          }
+
+          const ctor = testElement.constructor;
+          if (ctor && typeof ctor.getConfigElement === 'function') {
+            editor = await ctor.getConfigElement();
+          }
+        }
+
         if (!editor) {
           continue;
         }
@@ -337,6 +356,7 @@ class schloenkomatDashboardStrategyEditor extends HTMLElement {
 
         editor.addEventListener('config-changed', (ev) => {
           ev.stopPropagation();
+
           const value = ev.detail?.config || {};
           const { type, ...rest } = value;
 
@@ -352,7 +372,7 @@ class schloenkomatDashboardStrategyEditor extends HTMLElement {
 
         return editor;
       } catch (err) {
-        console.error('Power Flow Card Editor konnte nicht erstellt werden:', err);
+        console.error(`Power Flow Card Editor (${tagName}) konnte nicht erstellt werden:`, err);
       }
     }
 
