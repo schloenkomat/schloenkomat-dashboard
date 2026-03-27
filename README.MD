@@ -1,6 +1,6 @@
-# simon42 Dashboard Strategy
+# Hierbei handelt es sich um einen Fork des von simon42 gebauten dynamischen Dashboards - ich erweitere das Dashboard um die power_flow_card
 
-> **⚠️ Hinweis:** Diese README wird nicht laufend aktualisiert, sondern nur gelegentlich und leider auch viel zu unregelmäßig. Der aktuelle Code ist vermutlich bereits weiter als hier dokumentiert. Im Zweifel: Code ist die Dokumentation! 😅
+> **⚠️ Hinweis:** Nachfolgend findet sich die Originalbeschreibung von Simon42
 
 Eine modulare und hochkonfigurierbare Dashboard-Strategy für Home Assistant, die automatisch Views basierend auf Bereichen, Entitäten und deren Zuständen generiert. Wächst mit dem User mit und ist sowohl für Anfänger als auch Fortgeschrittene interessant.
 
