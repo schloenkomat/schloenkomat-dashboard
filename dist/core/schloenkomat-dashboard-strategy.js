@@ -116,20 +116,18 @@ class Simon42DashboardStrategy {
       ...createAreaViews(visibleAreas, devices, entities, showRoomViews, config.areas_options || {}, config)
     ];
 
-    return {
-      title: "Schloenkomat Dashboard",
-      views
-    };
-  }
+      return {
+    title: "Schloenkomat Dashboard",
+    views
+  };
+}
 
-  // Füge die Methode hinzu, um den Config-Editor zu laden
-  static async getConfigElement() {
-    // Der Editor sollte schon geladen sein, da er im Loader ist
-    // Warte kurz, falls er noch lädt
-    await import('./simon42-dashboard-strategy-editor.js');
-    await customElements.whenDefined('schloenkomat-dashboard-strategy-editor');
-    return document.createElement('schloenkomat-dashboard-strategy-editor');
-  }
+// Füge die Methode hinzu, um den Config-Editor zu laden
+static async getConfigElement() {
+  await import('./schloenkomat-dashboard-strategy-editor.js');
+  await customElements.whenDefined('schloenkomat-dashboard-strategy-editor');
+  return document.createElement('schloenkomat-dashboard-strategy-editor');
+}
 }
 
 // Registriere Custom Element mit dem korrekten Namen
