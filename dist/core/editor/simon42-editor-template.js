@@ -7,7 +7,7 @@ export function renderEditorHTML({ allAreas, hiddenAreas, areaOrder, showEnergy,
   return `
     <div class="card-config">
       <div class="section">
-        <div class="section-title">Info-Karten</div>
+        <div class="section-title">TEST 123</div>
         <div class="form-row">
           <input 
             type="checkbox" 
