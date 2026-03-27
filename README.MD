@@ -1,16 +1,29 @@
 # Hierbei handelt es sich um einen Fork des von simon42 gebauten dynamischen Dashboards - ich erweitere das Dashboard um die power_flow_card
 
-> **⚠️ Hinweis:** Nachfolgend findet sich die Originalbeschreibung von Simon42
 
-Eine modulare und hochkonfigurierbare Dashboard-Strategy für Home Assistant, die automatisch Views basierend auf Bereichen, Entitäten und deren Zuständen generiert. Wächst mit dem User mit und ist sowohl für Anfänger als auch Fortgeschrittene interessant.
+<summary>Installation</summary>
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=TheRealSimon42&repository=simon42-dashboard-strategy&category=plugin)
+1. Gehe zu HACS → **Custom repositories**
+2. Füge das Repository hinzu: `https://github.com/schloenkomat/schloenkomat-dashboard`
+3. Installiere "Schloenkomat Dashboard"
+4. Folge den Anweisungen in HACS für die Resource-Registrierung und Dashboard-Erstellung.
 
----
+<summary>Dashboard erstellen</summary>
 
-## 💖 Unterstütze dieses Projekt
+1. Gehe zu **Einstellungen** → **Dashboards**
+2. Klicke auf **Dashboard hinzufügen**
+3. Wähle **Neue Ansicht** und dann den **Edit-Modus**
+4. Klicke auf die **drei Punkte** (⋮) → **Raw-Konfigurationseditor**
+5. Füge die folgende Konfiguration ein:
 
-Wenn dir die simon42 Dashboard Strategy hilft, unterstütze die Weiterentwicklung:
+```yaml
+strategy:
+  type: custom:schloenkomat-dashboard
+```
+
+> **⚠️ Hinweis:** Nachfolgend findet sich die Möglichkeit zur Unterstützung von Simon42
+
+Unterstütze die Weiterentwicklung:
 
 <p align="center">
   <a href="https://youtube.com/@simon42/join">
@@ -25,142 +38,6 @@ Wenn dir die simon42 Dashboard Strategy hilft, unterstütze die Weiterentwicklun
 </p>
 
 ---
-
-## ✨ Features im Überblick
-
-### 🎨 Benutzerfreundlichkeit
-- **Grafischer Konfigurator** - Keine YAML-Kenntnisse erforderlich
-- **Drag & Drop** - Einfache Neuordnung von Bereichen
-- **Intuitive Hierarchie** - Area → Domain → Entity-Struktur
-- **Echtzeit-Updates** - Änderungen werden sofort gespeichert
-- **Responsive Design** - Optimiert für Desktop, Tablet und Mobile
-
-### 🏠 Intelligente Automatisierung
-- **Automatische Raum-Erkennung** - Nutzt Home Assistant Areas & Devices
-- **Dynamische Gruppierung** - Entities nach Status und Typ gruppiert
-- **Floor-basierte Organisation** - Optional: Bereiche nach Etagen gruppieren
-- **Batch-Aktionen** - Gruppensteuerung über Heading-Badges
-- **Reaktive Updates** - Echtzeit-Aktualisierung der Summary Cards
-
-### 🔧 Granulare Kontrolle
-- **Entity-Level-Filterung** - Verstecke einzelne Entities pro Raum und Domain
-- **Label-System** - Globale Entity-Filterung via `no_dboard` Label
-- **Bereich-spezifische Konfiguration** - Jeder Raum individuell anpassbar
-- **Domain-Gruppierung** - Intelligente Zusammenfassung nach Entity-Typen
-- **Favoriten-System** - Markiere wichtige Entitäten in der Übersicht
-- **Raum-Pins** - Pinne spezielle Entitäten in ihren zugeordneten Räumen
-
-### 📊 Spezialisierte Views
-- **Lichter-Übersicht** - Alle Lichter, gruppiert nach Status (on/off)
-- **Rollos & Vorhänge** - Covers gruppiert nach Position (offen/geschlossen)
-- **Sicherheit** - Türen, Fenster, Schlösser mit Status-Übersicht
-- **Batterie-Status** - Kritische, niedrige und gute Batterien
-- **Raum-Details** - Pro Bereich mit allen relevanten Entities
-
-### ⚡ Performance
-- **Registry-Caching** - Reduzierte WebSocket-Calls um 85%
-- **Optimierte Filterung** - Domain-Filter vor komplexen Validierungen
-- **Set-basierte Lookups** - Schnelle Entity-Suche
-- **Lazy Loading** - Entities werden erst bei Bedarf geladen
-
-### 🔌 Optionale Integrationen
-- **Search Card Support** - Integration für custom search cards
-- **Alarm Panel** - Unterstützung für Alarmanlagen
-- **Reolink Kameras** - Erweiterte Kamera-Integration
-- **Masonry Layout** - Integration des s42-masonry-view Projekts
-
-## 📦 Installation
-
-### Option 1: Manuelle Installation (Nicht empfohlen!)
-
-<details>
-
-<summary>Manuelle Installationsschritte</summary>
-
-#### Schritt 1: Dateien kopieren
-
-Kopiere alle Dateien aus dem `dist` Ordner nach:
-```
-/config/www/simon42-strategy/
-```
-
-#### Schritt 2: Resource registrieren
-
-Füge in deiner `configuration.yaml` hinzu:
-
-```yaml
-lovelace:
-  mode: storage
-  resources:
-    - url: /local/simon42-strategy/simon42-dashboard-strategy.js
-      type: module
-```
-
-#### Schritt 3: Home Assistant neu starten
-
-Starte Home Assistant neu, damit die neue Resource geladen wird.
-
-#### Schritt 4: Dashboard erstellen
-
-1. Gehe zu **Einstellungen** → **Dashboards**
-2. Klicke auf **Dashboard hinzufügen**
-3. Wähle **Neue Ansicht** und dann den **Edit-Modus**
-4. Klicke auf die **drei Punkte** (⋮) → **Raw-Konfigurationseditor**
-5. Füge die folgende Konfiguration ein:
-
-```yaml
-strategy:
-  type: custom:simon42-dashboard
-```
-
-6. Speichere und schließe - der grafische Editor öffnet sich automatisch!
-
-</details>
-
-### Option 2: Installation über HACS (empfohlen)
-
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=TheRealSimon42&repository=simon42-dashboard-strategy&category=plugin)
-
-
-<details>
-
-<summary>Alternative zum Button oben 👆</summary>
-
-1. Gehe zu HACS → **Custom repositories**
-2. Füge das Repository hinzu: `https://github.com/TheRealSimon42/simon42-dashboard-strategy`
-3. Installiere die "Simon42 Dashboard Strategy"
-4. Folge den Anweisungen in HACS für die Resource-Registrierung und Dashboard-Erstellung.
-
-</details>
-
-## 🖥️ Benutzung / Dashboard erstellen
-
-1. Gehe zu **Einstellungen** → **Dashboards**
-2. Klicke auf **Dashboard hinzufügen**
-3. Wähle **Neues Dashboard von Grund auf** und vergebe einen Namen
-4. Dann das neue Dashboard aufrufen und den **Edit-Modus** oben rechts aktivieren.
-5. Klicke auf die **drei Punkte** (⋮) → **Raw-Konfigurationseditor**
-6. Füge die folgende Konfiguration ein:
-
-```yaml
-strategy:
-  type: custom:simon42-dashboard
-```
-
-Nicht vergessen, anschließend den Browser-Cache zu leeren 👍
-
-## 🤖 Projekt-Kontext für KI-Assistenten
-
-Dieses Projekt ist eine modulare Lovelace Dashboard-Strategy für Home Assistant, entwickelt von Simon42. Es generiert automatisch Views basierend auf HA-Areas, Devices und Entities. Die Codebasis ist in JavaScript (ES6-Module) strukturiert:
-
-- **Entry-Point**: `dist/simon42-dashboard-strategy.js` (lädt den Loader)
-- **Loader**: `dist/simon42-strategies-loader.js` (importiert alle Module)
-- **Core**: Haupt-Strategy und Editor in `dist/core/`
-- **Utils**: Hilfsfunktionen in `dist/utils/`
-- **Views**: Spezialisierte View-Strategien in `dist/views/`
-- **Cards**: Custom Cards in `dist/cards/`
-
-Für Änderungen: Respektiere die modulare Struktur, nutze ES6-Imports/Exports, teste in HA-Umgebung. HACS-kompatibel seit Version 1.0.2.
 
 ## 🎨 Grafischer Konfigurator
 
