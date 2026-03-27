@@ -891,4 +891,4 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
   }
 }
 
-customElements.define("simon42-dashboard-strategy-editor", Simon42DashboardStrategyEditor);
+customElements.define("schloenkomat-dashboard-strategy-editor", Simon42DashboardStrategyEditor);
