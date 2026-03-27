@@ -17,7 +17,7 @@ import {
   sortAreaItems
 } from './editor/schloenkomat-editor-handlers.js';
 
-class SchloenkomatDashboardStrategyEditor extends HTMLElement {
+class schloenkomatDashboardStrategyEditor extends HTMLElement {
   constructor() {
     super();
     this._expandedAreas = new Set();
