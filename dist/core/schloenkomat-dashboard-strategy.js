@@ -6,25 +6,25 @@
 // ====================================================================
 
 import { getVisibleAreas } from '../utils/simon42-helpers.js';
-import { 
-  collectPersons, 
-  collectLights, 
-  collectCovers, 
-  collectSecurityUnsafe, 
-  collectBatteriesCritical, 
-  findWeatherEntity, 
-  findDummySensor 
+import {
+  collectPersons,
+  collectLights,
+  collectCovers,
+  collectSecurityUnsafe,
+  collectBatteriesCritical,
+  findWeatherEntity,
+  findDummySensor
 } from '../utils/simon42-data-collectors.js';
 import { createPersonBadges } from '../utils/simon42-badge-builder.js';
-import { 
-  createOverviewSection, 
-  createAreasSection, 
-  createWeatherEnergySection 
+import {
+  createOverviewSection,
+  createAreasSection,
+  createWeatherEnergySection
 } from '../utils/simon42-section-builder.js';
-import { 
-  createOverviewView, 
-  createUtilityViews, 
-  createAreaViews 
+import {
+  createOverviewView,
+  createUtilityViews,
+  createAreaViews
 } from '../utils/simon42-view-builder.js';
 
 class Simon42DashboardStrategy {
@@ -39,8 +39,8 @@ class Simon42DashboardStrategy {
 
     // Labels für Filterung von Entitäten
     const excludeLabels = entities
-      .filter(e => e.labels?.includes("no_dboard"))
-      .map(e => e.entity_id);
+      .filter((e) => e.labels?.includes('no_dboard'))
+      .map((e) => e.entity_id);
 
     // Filtere und sortiere Areale basierend auf Config
     const visibleAreas = getVisibleAreas(areas, config.areas_display);
@@ -54,7 +54,7 @@ class Simon42DashboardStrategy {
     const weatherEntity = findWeatherEntity(hass, excludeLabels, config);
     const someSensorId = findDummySensor(hass, excludeLabels, config);
 
-    // Erstelle Person-Badges (KORRIGIERT: mit hass Parameter)
+    // Erstelle Person-Badges
     const personBadges = createPersonBadges(persons, hass);
 
     // Prüfe ob Wetter-Karte angezeigt werden soll (Standard: true)
@@ -86,7 +86,7 @@ class Simon42DashboardStrategy {
       groupByFloors,
       config
     );
-    
+
     // Erstelle Sections für den Haupt-View
     const overviewSections = [
       createOverviewSection({
@@ -102,10 +102,10 @@ class Simon42DashboardStrategy {
       // Wenn groupByFloors aktiv ist, ist areasSections ein Array von Sections
       ...(Array.isArray(areasSections) ? areasSections : [areasSections]),
       // Füge Wetter & Energie Section(s) nur hinzu wenn nicht null/leer
-      ...(weatherEnergySection 
-        ? (Array.isArray(weatherEnergySection) 
-          ? weatherEnergySection 
-          : [weatherEnergySection])
+      ...(weatherEnergySection
+        ? (Array.isArray(weatherEnergySection)
+            ? weatherEnergySection
+            : [weatherEnergySection])
         : [])
     ];
 
@@ -113,22 +113,29 @@ class Simon42DashboardStrategy {
     const views = [
       createOverviewView(overviewSections, personBadges),
       ...createUtilityViews(entities, showSummaryViews, config),
-      ...createAreaViews(visibleAreas, devices, entities, showRoomViews, config.areas_options || {}, config)
+      ...createAreaViews(
+        visibleAreas,
+        devices,
+        entities,
+        showRoomViews,
+        config.areas_options || {},
+        config
+      )
     ];
 
-      return {
-    title: "Schloenkomat Dashboard",
-    views
-  };
-}
+    return {
+      title: 'Schloenkomat Dashboard',
+      views
+    };
+  }
 
-// Füge die Methode hinzu, um den Config-Editor zu laden
-static async getConfigElement() {
-  await import('./schloenkomat-dashboard-strategy-editor.js');
-  await customElements.whenDefined('schloenkomat-dashboard-strategy-editor');
-  return document.createElement('schloenkomat-dashboard-strategy-editor');
-}
+  // Füge die Methode hinzu, um den Config-Editor zu laden
+  static async getConfigElement() {
+    await import('./schloenkomat-dashboard-strategy-editor.js');
+    await customElements.whenDefined('schloenkomat-dashboard-strategy-editor');
+    return document.createElement('schloenkomat-dashboard-strategy-editor');
+  }
 }
 
 // Registriere Custom Element mit dem korrekten Namen
-customElements.define("ll-strategy-dashboard-schloenkomat-dashboard", Simon42DashboardStrategy);
+customElements.define('ll-strategy-dashboard-schloenkomat-dashboard', Simon42DashboardStrategy);
