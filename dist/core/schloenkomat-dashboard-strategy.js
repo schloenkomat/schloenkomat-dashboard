@@ -5,7 +5,7 @@
 // Keine WebSocket-Calls mehr nötig!
 // ====================================================================
 
-import { getVisibleAreas } from '../utils/simon42-helpers.js';
+import { getVisibleAreas } from '../utils/schloenkomat-helpers.js';
 import {
   collectPersons,
   collectLights,
@@ -14,18 +14,18 @@ import {
   collectBatteriesCritical,
   findWeatherEntity,
   findDummySensor
-} from '../utils/simon42-data-collectors.js';
-import { createPersonBadges } from '../utils/simon42-badge-builder.js';
+} from '../utils/schloenkomat-data-collectors.js';
+import { createPersonBadges } from '../utils/schloenkomat-badge-builder.js';
 import {
   createOverviewSection,
   createAreasSection,
   createWeatherEnergySection
-} from '../utils/simon42-section-builder.js';
+} from '../utils/schloenkomat-section-builder.js';
 import {
   createOverviewView,
   createUtilityViews,
   createAreaViews
-} from '../utils/simon42-view-builder.js';
+} from '../utils/schloenkomat-view-builder.js';
 
 class Simon42DashboardStrategy {
   static async generate(config, hass) {

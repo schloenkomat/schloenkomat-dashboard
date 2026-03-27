@@ -1,7 +1,7 @@
 // ====================================================================
 // VIEW STRATEGY - RAUM (generiert Raum-Details mit Sensor-Badges) - OPTIMIERT + KAMERAS
 // ====================================================================
-import { stripAreaName, isEntityHiddenOrDisabled, sortByLastChanged } from '../utils/simon42-helpers.js';
+import { stripAreaName, isEntityHiddenOrDisabled, sortByLastChanged } from '../utils/schloenkomat-helpers.js';
 
 class Simon42ViewRoomStrategy {
   static async generate(config, hass) {

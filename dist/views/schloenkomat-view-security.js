@@ -1,7 +1,7 @@
 // ====================================================================
 // VIEW STRATEGY - SECURITY (Schlösser + Türen/Garagen + Fenster) - OPTIMIERT
 // ====================================================================
-import { getExcludedLabels } from '../utils/simon42-helpers.js';
+import { getExcludedLabels } from '../utils/schloenkomat-helpers.js';
 
 class Simon42ViewSecurityStrategy {
   static async generate(config, hass) {

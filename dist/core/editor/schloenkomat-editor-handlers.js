@@ -3,7 +3,7 @@
 // ====================================================================
 // Event-Handler für den Dashboard Strategy Editor
 
-import { renderAreaEntitiesHTML } from './simon42-editor-template.js';
+import { renderAreaEntitiesHTML } from './schloenkomat-editor-template.js';
 
 export function attachWeatherCheckboxListener(element, callback) {
   const weatherCheckbox = element.querySelector('#show-weather');
