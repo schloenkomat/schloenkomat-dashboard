@@ -210,6 +210,10 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
 
     this._config = newConfig;
     this._fireConfigChanged(newConfig);
+
+    // UI sofort aktualisieren
+    this._updateEnergyModeVisibility();
+    this._renderPowerFlowCardEditor();
   }
 
   _updateEnergyModeVisibility() {
@@ -241,7 +245,9 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
     const showEnergy = this._config.show_energy !== false;
     const energyDashboardMode = this._config.energy_dashboard_mode || 'energy_distribution';
 
+    this._powerFlowEditorElement = null;
     container.innerHTML = '';
+
     if (errorEl) {
       errorEl.style.display = 'none';
       errorEl.textContent = '';
@@ -824,6 +830,10 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
 
     this._config = newConfig;
     this._fireConfigChanged(newConfig);
+
+    // UI sofort aktualisieren
+    this._updateEnergyModeVisibility();
+    this._renderPowerFlowCardEditor();
   }
 
   _showSearchCardChanged(showSearchCard) {
