@@ -3,7 +3,7 @@
 // ====================================================================
 // HTML-Template für den Dashboard Strategy Editor
 
-export function renderEditorHTML({ allAreas, hiddenAreas, areaOrder, showEnergy, showWeather, showSummaryViews, showRoomViews, showSearchCard, hasSearchCardDeps, summariesColumns, alarmEntity, alarmEntities, favoriteEntities, roomPinEntities, allEntities, groupByFloors, showCoversSummary }) {
+export function renderEditorHTML({ allAreas, hiddenAreas, areaOrder, showEnergy, showWeather, showSummaryViews, showRoomViews, showSearchCard, hasSearchCardDeps, summariesColumns, alarmEntity, alarmEntities, favoriteEntities, roomPinEntities, allEntities, groupByFloors, showCoversSummary, powerFlowCardConfigText }) {
   return `
     <div class="card-config">
       <div class="section">
@@ -30,6 +30,25 @@ export function renderEditorHTML({ allAreas, hiddenAreas, areaOrder, showEnergy,
         <div class="description">
           Zeigt die Energie-Verteilungskarte in der Übersicht an, wenn Energiedaten verfügbar sind.
         </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Power Flow Card</div>
+        <div class="description" style="margin-left: 0; margin-bottom: 12px;">
+          JSON-Konfiguration für <code>custom:power-flow-card-plus</code>. Diese Konfiguration wird als <code>power_flow_card_config</code> gespeichert und in der Übersicht verwendet, wenn Energie aktiviert ist.
+        </div>
+        <div class="form-row" style="display: block;">
+          <textarea
+            id="power-flow-card-config"
+            style="width: 100%; min-height: 320px; padding: 8px; border-radius: 4px; border: 1px solid var(--divider-color); background: var(--card-background-color); color: var(--primary-text-color); font-family: monospace; font-size: 13px; box-sizing: border-box;"
+            spellcheck="false"
+          >${powerFlowCardConfigText || '{}'}</textarea>
+        </div>
+        <div
+          id="power-flow-card-config-error"
+          class="description"
+          style="display: none; color: var(--error-color); margin-left: 0; margin-top: 8px;"
+        ></div>
       </div>
 
       <div class="section">
@@ -215,7 +234,6 @@ function renderFavoritesList(favoriteEntities, allEntities) {
     return '<div class="empty-state" style="padding: 12px; text-align: center; color: var(--secondary-text-color); font-style: italic;">Keine Favoriten hinzugefügt</div>';
   }
 
-  // Erstelle Map für schnellen Zugriff auf Entity-Namen
   const entityMap = new Map(allEntities.map(e => [e.entity_id, e.name]));
 
   return `
@@ -244,7 +262,6 @@ export function renderRoomPinsList(roomPinEntities, allEntities, allAreas) {
     return '<div class="empty-state" style="padding: 12px; text-align: center; color: var(--secondary-text-color); font-style: italic;">Keine Raum-Pins hinzugefügt</div>';
   }
 
-  // Erstelle Maps für schnellen Zugriff
   const entityMap = new Map(allEntities.map(e => [e.entity_id, e]));
   const areaMap = new Map(allAreas.map(a => [a.area_id, a.name]));
 
