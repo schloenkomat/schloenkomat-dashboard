@@ -27,7 +27,7 @@ import {
   createAreaViews
 } from '../utils/schloenkomat-view-builder.js';
 
-class Simon42DashboardStrategy {
+class schloenkomatDashboardStrategy {
   static async generate(config, hass) {
     // Nutze die bereits im hass-Objekt verfügbaren Registry-Daten
     // Diese sind als Objects verfügbar mit ID als Key
@@ -138,4 +138,4 @@ class Simon42DashboardStrategy {
 }
 
 // Registriere Custom Element mit dem korrekten Namen
-customElements.define('ll-strategy-dashboard-schloenkomat-dashboard', Simon42DashboardStrategy);
+customElements.define('ll-strategy-dashboard-schloenkomat-dashboard', schloenkomatDashboardStrategy);

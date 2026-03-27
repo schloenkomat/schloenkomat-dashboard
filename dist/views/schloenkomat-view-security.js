@@ -3,7 +3,7 @@
 // ====================================================================
 import { getExcludedLabels } from '../utils/schloenkomat-helpers.js';
 
-class Simon42ViewSecurityStrategy {
+class schloenkomatViewSecurityStrategy {
   static async generate(config, hass) {
     const { entities } = config;
     
@@ -307,4 +307,4 @@ class Simon42ViewSecurityStrategy {
 }
 
 // Registriere Custom Element
-customElements.define("ll-strategy-simon42-view-security", Simon42ViewSecurityStrategy);
+customElements.define("ll-strategy-schloenkomat-view-security", schloenkomatViewSecurityStrategy);

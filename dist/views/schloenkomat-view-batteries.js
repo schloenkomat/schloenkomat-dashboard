@@ -6,7 +6,7 @@
 
 import { getExcludedLabels } from '../utils/schloenkomat-helpers.js';
 
-class Simon42ViewBatteriesStrategy {
+class schloenkomatViewBatteriesStrategy {
   static async generate(config, hass) {
     const { entities } = config;
     
@@ -144,4 +144,4 @@ class Simon42ViewBatteriesStrategy {
 }
 
 // Registriere Custom Element
-customElements.define("ll-strategy-simon42-view-batteries", Simon42ViewBatteriesStrategy);
+customElements.define("ll-strategy-schloenkomat-view-batteries", schloenkomatViewBatteriesStrategy);

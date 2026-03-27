@@ -1,12 +1,12 @@
 // ====================================================================
-// SIMON42 SUMMARY CARD - Reactive Summary Tile - OPTIMIZED
+// schloenkomat SUMMARY CARD - Reactive Summary Tile - OPTIMIZED
 // ====================================================================
 // Eine reactive Card die automatisch auf State-Änderungen reagiert
 // und die Anzahl von Entities dynamisch zählt
 // KEIN redundantes Caching von Registry-Daten mehr!
 // ====================================================================
 
-class Simon42SummaryCard extends HTMLElement {
+class schloenkomatSummaryCard extends HTMLElement {
   constructor() {
     super();
     this._hass = null;
@@ -53,7 +53,7 @@ class Simon42SummaryCard extends HTMLElement {
     this._excludeLabelsSet = new Set();
     
     if (!this._hass.entities) {
-      console.warn('[Simon42 Summary Card] hass.entities not available');
+      console.warn('[schloenkomat Summary Card] hass.entities not available');
       return;
     }
 
@@ -391,12 +391,12 @@ class Simon42SummaryCard extends HTMLElement {
   }
 }
 
-customElements.define('simon42-summary-card', Simon42SummaryCard);
+customElements.define('schloenkomat-summary-card', schloenkomatSummaryCard);
 
 // Registriere für Card Picker
 window.customCards = window.customCards || [];
 window.customCards.push({
-  type: 'simon42-summary-card',
-  name: 'Simon42 Summary Card',
+  type: 'schloenkomat-summary-card',
+  name: 'schloenkomat Summary Card',
   description: 'Reactive summary card that counts entities dynamically'
 });

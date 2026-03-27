@@ -5,7 +5,7 @@
 // ====================================================================
 import { getExcludedLabels, stripCoverType } from '../utils/schloenkomat-helpers.js';
 
-class Simon42ViewCoversStrategy {
+class schloenkomatViewCoversStrategy {
   static async generate(config, hass) {
     // Die Strategy generiert zwei reaktive Group-Cards
     // Eine für offene, eine für geschlossene Covers
@@ -18,14 +18,14 @@ class Simon42ViewCoversStrategy {
           type: "grid",
           cards: [
             {
-              type: "custom:simon42-covers-group-card",
+              type: "custom:schloenkomat-covers-group-card",
               entities: config.entities,
               config: config.config,
               device_classes: config.device_classes || ["awning", "blind", "curtain", "shade", "shutter", "window"],
               group_type: "open"
             },
             {
-              type: "custom:simon42-covers-group-card",
+              type: "custom:schloenkomat-covers-group-card",
               entities: config.entities,
               config: config.config,
               device_classes: config.device_classes || ["awning", "blind", "curtain", "shade", "shutter", "window"],
@@ -39,6 +39,6 @@ class Simon42ViewCoversStrategy {
 }
 
 // Registriere Custom Element
-customElements.define("ll-strategy-simon42-view-covers", Simon42ViewCoversStrategy);
+customElements.define("ll-strategy-schloenkomat-view-covers", schloenkomatViewCoversStrategy);
 
-console.log('✅ Simon42 View Covers Strategy (with reactive group cards) loaded');
+console.log('✅ schloenkomat View Covers Strategy (with reactive group cards) loaded');

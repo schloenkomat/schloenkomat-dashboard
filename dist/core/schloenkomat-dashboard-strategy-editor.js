@@ -1,5 +1,5 @@
 // ====================================================================
-// SIMON42 DASHBOARD STRATEGY - EDITOR
+// schloenkomat DASHBOARD STRATEGY - EDITOR
 // ====================================================================
 import { getEditorStyles } from './editor/schloenkomat-editor-styles.js';
 import { renderEditorHTML } from './editor/schloenkomat-editor-template.js';
@@ -1079,4 +1079,4 @@ class SchloenkomatDashboardStrategyEditor extends HTMLElement {
   }
 }
 
-customElements.define("schloenkomat-dashboard-strategy-editor", Simon42DashboardStrategyEditor);
+customElements.define("schloenkomat-dashboard-strategy-editor", schloenkomatDashboardStrategyEditor);

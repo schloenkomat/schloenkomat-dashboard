@@ -67,7 +67,7 @@ export function createOverviewSection(data) {
   // Erstelle die Summary-Cards basierend auf Konfiguration
   const summaryCards = [
     {
-      type: "custom:simon42-summary-card",
+      type: "custom:schloenkomat-summary-card",
       summary_type: "lights",
       areas_options: config.areas_options || {}
     }
@@ -76,7 +76,7 @@ export function createOverviewSection(data) {
   // Covers optional hinzufügen
   if (showCoversSummary) {
     summaryCards.push({
-      type: "custom:simon42-summary-card",
+      type: "custom:schloenkomat-summary-card",
       summary_type: "covers",
       areas_options: config.areas_options || {}
     });
@@ -84,12 +84,12 @@ export function createOverviewSection(data) {
 
   summaryCards.push(
     {
-      type: "custom:simon42-summary-card",
+      type: "custom:schloenkomat-summary-card",
       summary_type: "security",
       areas_options: config.areas_options || {}
     },
     {
-      type: "custom:simon42-summary-card",
+      type: "custom:schloenkomat-summary-card",
       summary_type: "batteries",
       areas_options: config.areas_options || {}
     }

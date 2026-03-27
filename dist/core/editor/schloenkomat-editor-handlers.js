@@ -1,5 +1,5 @@
 // ====================================================================
-// SIMON42 EDITOR HANDLERS
+// EDITOR HANDLERS
 // ====================================================================
 // Event-Handler für den Dashboard Strategy Editor
 

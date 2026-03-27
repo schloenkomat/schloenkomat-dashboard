@@ -1,5 +1,5 @@
 // ====================================================================
-// SIMON42 HELPER FUNCTIONS - OPTIMIZED
+// HELPER FUNCTIONS - OPTIMIZED
 // ====================================================================
 // Gemeinsame Helper-Funktionen für alle Strategies
 // KEIN redundantes Caching oder doppelte Registry-Lookups mehr!

@@ -1,11 +1,11 @@
 // ====================================================================
-// SIMON42 LIGHTS GROUP CARD - Reaktive Card für eine Licht-Gruppe
+// schloenkomat LIGHTS GROUP CARD - Reaktive Card für eine Licht-Gruppe
 // ====================================================================
 // Diese Card zeigt entweder eingeschaltete ODER ausgeschaltete Lichter
 // und aktualisiert sich automatisch bei State-Änderungen
 // ====================================================================
 
-class Simon42LightsGroupCard extends HTMLElement {
+class schloenkomatLightsGroupCard extends HTMLElement {
   constructor() {
     super();
     this._hass = null;
@@ -232,6 +232,6 @@ class Simon42LightsGroupCard extends HTMLElement {
 }
 
 // Registriere Custom Element
-customElements.define("simon42-lights-group-card", Simon42LightsGroupCard);
+customElements.define("schloenkomat-lights-group-card", schloenkomatLightsGroupCard);
 
-console.log('✅ Simon42 Lights Group Card loaded');
+console.log('✅ schloenkomat Lights Group Card loaded');

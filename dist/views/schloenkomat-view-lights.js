@@ -5,7 +5,7 @@
 // ====================================================================
 import { getExcludedLabels } from '../utils/schloenkomat-helpers.js';
 
-class Simon42ViewLightsStrategy {
+class schloenkomatViewLightsStrategy {
   static async generate(config, hass) {
     // Die Strategy generiert zwei reaktive Group-Cards
     // Eine für eingeschaltete, eine für ausgeschaltete Lichter
@@ -18,13 +18,13 @@ class Simon42ViewLightsStrategy {
           type: "grid",
           cards: [
             {
-              type: "custom:simon42-lights-group-card",
+              type: "custom:schloenkomat-lights-group-card",
               entities: config.entities,
               config: config.config,
               group_type: "on"
             },
             {
-              type: "custom:simon42-lights-group-card",
+              type: "custom:schloenkomat-lights-group-card",
               entities: config.entities,
               config: config.config,
               group_type: "off"
@@ -37,6 +37,6 @@ class Simon42ViewLightsStrategy {
 }
 
 // Registriere Custom Element
-customElements.define("ll-strategy-simon42-view-lights", Simon42ViewLightsStrategy);
+customElements.define("ll-strategy-schloenkomat-view-lights", schloenkomatViewLightsStrategy);
 
-console.log('✅ Simon42 View Lights Strategy (with reactive group cards) loaded');
+console.log('✅ schloenkomat View Lights Strategy (with reactive group cards) loaded');

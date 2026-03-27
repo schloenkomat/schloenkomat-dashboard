@@ -3,7 +3,7 @@
 // ====================================================================
 import { stripAreaName, isEntityHiddenOrDisabled, sortByLastChanged } from '../utils/schloenkomat-helpers.js';
 
-class Simon42ViewRoomStrategy {
+class schloenkomatViewRoomStrategy {
   static async generate(config, hass) {
     const { area, devices, entities } = config;
     
@@ -762,4 +762,4 @@ class Simon42ViewRoomStrategy {
 }
 
 // Registriere Custom Element
-customElements.define("ll-strategy-simon42-view-room", Simon42ViewRoomStrategy);
+customElements.define("ll-strategy-schloenkomat-view-room", schloenkomatViewRoomStrategy);

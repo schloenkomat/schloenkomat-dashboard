@@ -1,11 +1,11 @@
 // ====================================================================
-// SIMON42 COVERS GROUP CARD - Reaktive Card für eine Cover-Gruppe
+// schloenkomat COVERS GROUP CARD - Reaktive Card für eine Cover-Gruppe
 // ====================================================================
 // Diese Card zeigt entweder offene ODER geschlossene Covers
 // und aktualisiert sich automatisch bei State-Änderungen
 // ====================================================================
 
-class Simon42CoversGroupCard extends HTMLElement {
+class schloenkomatCoversGroupCard extends HTMLElement {
   constructor() {
     super();
     this._hass = null;
@@ -289,6 +289,6 @@ class Simon42CoversGroupCard extends HTMLElement {
 }
 
 // Registriere Custom Element
-customElements.define("simon42-covers-group-card", Simon42CoversGroupCard);
+customElements.define("schloenkomat-covers-group-card", schloenkomatCoversGroupCard);
 
-console.log('✅ Simon42 Covers Group Card loaded');
+console.log('✅ schloenkomat Covers Group Card loaded');

@@ -1,5 +1,5 @@
 // ====================================================================
-// SIMON42 EDITOR TEMPLATE
+// EDITOR TEMPLATE
 // ====================================================================
 // HTML-Template für den Dashboard Strategy Editor
 
