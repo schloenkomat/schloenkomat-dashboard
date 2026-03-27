@@ -208,10 +208,19 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       delete newConfig.energy_dashboard_mode;
     }
 
+    if (
+      mode === 'power_flow_card' &&
+      (
+        !newConfig.power_flow_card_config ||
+        Object.keys(newConfig.power_flow_card_config).length === 0
+      )
+    ) {
+      newConfig.power_flow_card_config = {};
+    }
+
     this._config = newConfig;
     this._fireConfigChanged(newConfig);
 
-    // UI sofort aktualisieren
     this._updateEnergyModeVisibility();
     this._renderPowerFlowCardEditor();
   }
@@ -284,10 +293,17 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
   }
 
   async _createPowerFlowCardEditor() {
-    const fullCardConfig = {
-      type: 'custom:power-flow-card-plus',
-      ...(this._config.power_flow_card_config || {})
-    };
+    const existingConfig = this._config.power_flow_card_config || {};
+    const hasExistingConfig = Object.keys(existingConfig).length > 0;
+
+    const fullCardConfig = hasExistingConfig
+      ? {
+          type: 'custom:power-flow-card-plus',
+          ...existingConfig
+        }
+      : {
+          type: 'custom:power-flow-card-plus'
+        };
 
     const elementNamesToTry = [
       'power-flow-card-plus',
@@ -327,7 +343,7 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
           const newConfig = {
             ...this._config,
             energy_dashboard_mode: 'power_flow_card',
-            power_flow_card_config: rest
+            power_flow_card_config: rest || {}
           };
 
           this._config = newConfig;
@@ -831,7 +847,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
     this._config = newConfig;
     this._fireConfigChanged(newConfig);
 
-    // UI sofort aktualisieren
     this._updateEnergyModeVisibility();
     this._renderPowerFlowCardEditor();
   }
@@ -1065,3 +1080,5 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
 }
 
 customElements.define("schloenkomat-dashboard-strategy-editor", Simon42DashboardStrategyEditor);
+
+wie muss die jetzt sein?
