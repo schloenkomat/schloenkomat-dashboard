@@ -1,8 +1,8 @@
 // ====================================================================
 // SIMON42 DASHBOARD STRATEGY - EDITOR
 // ====================================================================
-import { getEditorStyles } from './editor/simon42-editor-styles.js';
-import { renderEditorHTML } from './editor/simon42-editor-template.js';
+import { getEditorStyles } from './editor/schloenkomat-editor-styles.js';
+import { renderEditorHTML } from './editor/schloenkomat-editor-template.js';
 import {
   attachWeatherCheckboxListener,
   attachEnergyCheckboxListener,
@@ -15,7 +15,7 @@ import {
   attachDragAndDropListeners,
   attachExpandButtonListeners,
   sortAreaItems
-} from './editor/simon42-editor-handlers.js';
+} from './editor/schloenkomat-editor-handlers.js';
 
 class Simon42DashboardStrategyEditor extends HTMLElement {
   constructor() {
@@ -552,7 +552,7 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
     const favoriteEntities = this._config.favorite_entities || [];
     const allEntities = this._getAllEntitiesForSelect();
 
-    import('./editor/simon42-editor-template.js').then(module => {
+    import('./editor/schloenkomat-editor-template.js').then(module => {
       container.innerHTML = module.renderFavoritesList?.(favoriteEntities, allEntities) ||
         this._renderFavoritesListFallback(favoriteEntities, allEntities);
 
@@ -671,7 +671,7 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       a.name.localeCompare(b.name)
     );
 
-    import('./editor/simon42-editor-template.js').then(module => {
+    import('./editor/schloenkomat-editor-template.js').then(module => {
       container.innerHTML = module.renderRoomPinsList?.(roomPinEntities, allEntities, allAreas) ||
         this._renderRoomPinsListFallback(roomPinEntities, allEntities, allAreas);
 

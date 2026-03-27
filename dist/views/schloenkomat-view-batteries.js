@@ -4,7 +4,7 @@
 // KEIN unnötiges Map-Caching mehr - nutzt direkt hass.entities[entityId]
 // ====================================================================
 
-import { getExcludedLabels } from '../utils/simon42-helpers.js';
+import { getExcludedLabels } from '../utils/schloenkomat-helpers.js';
 
 class Simon42ViewBatteriesStrategy {
   static async generate(config, hass) {
