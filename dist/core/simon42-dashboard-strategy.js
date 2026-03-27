@@ -117,7 +117,7 @@ class Simon42DashboardStrategy {
     ];
 
     return {
-      title: "Dynamisches Dashboard",
+      title: "Schloenkomat Dashboard",
       views
     };
   }
@@ -127,10 +127,10 @@ class Simon42DashboardStrategy {
     // Der Editor sollte schon geladen sein, da er im Loader ist
     // Warte kurz, falls er noch lädt
     await import('./simon42-dashboard-strategy-editor.js');
-    await customElements.whenDefined('simon42-dashboard-strategy-editor');
-    return document.createElement('simon42-dashboard-strategy-editor');
+    await customElements.whenDefined('schloenkomat-dashboard-strategy-editor');
+    return document.createElement('schloenkomat-dashboard-strategy-editor');
   }
 }
 
 // Registriere Custom Element mit dem korrekten Namen
-customElements.define("ll-strategy-simon42-dashboard", Simon42DashboardStrategy);
+customElements.define("ll-strategy-schloenkomat-dashboard", Simon42DashboardStrategy);
