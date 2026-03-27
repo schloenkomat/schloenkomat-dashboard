@@ -268,7 +268,7 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
     } catch (err) {
       console.error(err);
       if (errorEl) {
-        errorEl.textContent = `Grafischer Editor nicht verfügbar: ${err.message}`;
+        errorEl.textContent = `Grafischer Editor nicht verfügbar. Prüfe, ob power-flow-card-plus installiert und geladen ist. ${err.message}`;
         errorEl.style.display = 'block';
       }
       if (fallback) {
@@ -290,42 +290,47 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
 
     for (const tagName of elementNamesToTry) {
       try {
-        await customElements.whenDefined(tagName);
         const elementClass = customElements.get(tagName);
 
-        if (elementClass && typeof elementClass.getConfigElement === 'function') {
-          const editor = await elementClass.getConfigElement();
-          if (!editor) {
-            continue;
-          }
-
-          if (typeof editor.setConfig === 'function') {
-            editor.setConfig(fullCardConfig);
-          }
-
-          if ('hass' in editor) {
-            editor.hass = this._hass;
-          }
-
-          editor.addEventListener('config-changed', (ev) => {
-            ev.stopPropagation();
-            const value = ev.detail?.config || {};
-            const { type, ...rest } = value;
-
-            const newConfig = {
-              ...this._config,
-              energy_dashboard_mode: 'power_flow_card',
-              power_flow_card_config: rest
-            };
-
-            this._config = newConfig;
-            this._fireConfigChanged(newConfig);
-          });
-
-          return editor;
+        if (!elementClass) {
+          continue;
         }
+
+        if (typeof elementClass.getConfigElement !== 'function') {
+          continue;
+        }
+
+        const editor = await elementClass.getConfigElement();
+        if (!editor) {
+          continue;
+        }
+
+        if (typeof editor.setConfig === 'function') {
+          editor.setConfig(fullCardConfig);
+        }
+
+        if ('hass' in editor) {
+          editor.hass = this._hass;
+        }
+
+        editor.addEventListener('config-changed', (ev) => {
+          ev.stopPropagation();
+          const value = ev.detail?.config || {};
+          const { type, ...rest } = value;
+
+          const newConfig = {
+            ...this._config,
+            energy_dashboard_mode: 'power_flow_card',
+            power_flow_card_config: rest
+          };
+
+          this._config = newConfig;
+          this._fireConfigChanged(newConfig);
+        });
+
+        return editor;
       } catch (err) {
-        // weiter versuchen
+        console.error('Power Flow Card Editor konnte nicht erstellt werden:', err);
       }
     }
 
