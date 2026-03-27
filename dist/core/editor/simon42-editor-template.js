@@ -49,7 +49,7 @@ export function renderEditorHTML({
           <label for="show-energy">Energie-Dashboard anzeigen</label>
         </div>
         <div class="description">
-          Zeigt wahlweise das normale Energy-Dashboard oder eine Power-Flow-Card in der Übersicht an.
+          Zeigt wahlweise das normale Energy-Dashboard oder eine Power Flow Card in der Übersicht an.
         </div>
 
         <div class="form-row" id="energy-dashboard-mode-row" style="display: none; margin-top: 12px;">
