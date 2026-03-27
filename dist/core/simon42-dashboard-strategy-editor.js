@@ -9,7 +9,7 @@ import {
   attachSearchCardCheckboxListener,
   attachSummaryViewsCheckboxListener,
   attachRoomViewsCheckboxListener,
-  attachGroupByFloorsCheckboxListener, // NEU
+  attachGroupByFloorsCheckboxListener,
   attachCoversSummaryCheckboxListener,
   attachAreaCheckboxListeners,
   attachDragAndDropListeners,
@@ -20,22 +20,20 @@ import {
 class Simon42DashboardStrategyEditor extends HTMLElement {
   constructor() {
     super();
-    // Persistenter State für aufgeklappte Areas und Gruppen
     this._expandedAreas = new Set();
-    this._expandedGroups = new Map(); // Map<areaId, Set<groupKey>>
+    this._expandedGroups = new Map();
     this._isRendering = false;
   }
 
   setConfig(config) {
     this._config = config || {};
-    // Nur rendern wenn wir nicht gerade selbst die Config ändern
     if (!this._isUpdatingConfig) {
       this._render();
     }
   }
 
   set hass(hass) {
-    const shouldRender = !this._hass; // Nur beim ersten Mal rendern
+    const shouldRender = !this._hass;
     this._hass = hass;
     if (shouldRender) {
       this._render();
@@ -43,17 +41,14 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
   }
 
   _checkSearchCardDependencies() {
-    // Prüfe ob custom:search-card und card-tools verfügbar sind
     const hasSearchCard = customElements.get('search-card') !== undefined;
     const hasCardTools = window.customCards && window.customCards.some(card => 
       card.type === 'custom:search-card'
     );
     
-    // Alternative Prüfung: Versuche zu erkennen ob die Komponenten geladen wurden
     const searchCardExists = hasSearchCard || document.querySelector('search-card') !== null;
     const cardToolsExists = typeof window.customCards !== 'undefined' || typeof window.cardTools !== 'undefined';
     
-    // Beide müssen verfügbar sein
     return searchCardExists && cardToolsExists;
   }
 
@@ -65,17 +60,18 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
     const showWeather = this._config.show_weather !== false;
     const showEnergy = this._config.show_energy !== false;
     const showSearchCard = this._config.show_search_card === true;
-    const showSummaryViews = this._config.show_summary_views === true; // Standard: false
-    const showRoomViews = this._config.show_room_views === true; // Standard: false
-    const groupByFloors = this._config.group_by_floors === true; // NEU
+    const showSummaryViews = this._config.show_summary_views === true;
+    const showRoomViews = this._config.show_room_views === true;
+    const groupByFloors = this._config.group_by_floors === true;
     const showCoversSummary = this._config.show_covers_summary !== false;
     const summariesColumns = this._config.summaries_columns || 2;
     const alarmEntity = this._config.alarm_entity || '';
     const favoriteEntities = this._config.favorite_entities || [];
     const roomPinEntities = this._config.room_pin_entities || [];
+    const powerFlowCardConfig = this._config.power_flow_card_config || {};
+    const powerFlowCardConfigText = JSON.stringify(powerFlowCardConfig, null, 2);
     const hasSearchCardDeps = this._checkSearchCardDependencies();
     
-    // Sammle alle Alarm-Control-Panel-Entitäten
     const alarmEntities = Object.keys(this._hass.states)
       .filter(entityId => entityId.startsWith('alarm_control_panel.'))
       .map(entityId => {
@@ -87,17 +83,14 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       })
       .sort((a, b) => a.name.localeCompare(b.name));
     
-    // Alle Entitäten für Favoriten-Select
     const allEntities = this._getAllEntitiesForSelect();
     
-    // FEHLENDE VARIABLEN - HIER WAR DAS PROBLEM
     const allAreas = Object.values(this._hass.areas).sort((a, b) => 
       a.name.localeCompare(b.name)
     );
     const hiddenAreas = this._config.areas_display?.hidden || [];
     const areaOrder = this._config.areas_display?.order || [];
 
-    // Setze HTML-Inhalt mit Styles und Template
     this.innerHTML = `
       <style>${getEditorStyles()}</style>
       ${renderEditorHTML({ 
@@ -116,35 +109,33 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
         favoriteEntities,
         roomPinEntities,
         allEntities,
-        groupByFloors, // NEU
-        showCoversSummary
+        groupByFloors,
+        showCoversSummary,
+        powerFlowCardConfigText
       })}
     `;
 
-    // Binde Event-Listener
     attachWeatherCheckboxListener(this, (showWeather) => this._showWeatherChanged(showWeather));
     attachEnergyCheckboxListener(this, (showEnergy) => this._showEnergyChanged(showEnergy));
     attachSearchCardCheckboxListener(this, (showSearchCard) => this._showSearchCardChanged(showSearchCard));
     attachSummaryViewsCheckboxListener(this, (showSummaryViews) => this._showSummaryViewsChanged(showSummaryViews));
     attachRoomViewsCheckboxListener(this, (showRoomViews) => this._showRoomViewsChanged(showRoomViews));
-    attachGroupByFloorsCheckboxListener(this, (groupByFloors) => this._groupByFloorsChanged(groupByFloors)); // NEU
+    attachGroupByFloorsCheckboxListener(this, (groupByFloors) => this._groupByFloorsChanged(groupByFloors));
     attachCoversSummaryCheckboxListener(this, (showCoversSummary) => this._showCoversSummaryChanged(showCoversSummary));
+    this._attachPowerFlowCardConfigListener();
     this._attachSummariesColumnsListener();
     this._attachAlarmEntityListener();
     this._attachFavoritesListeners();
     this._attachRoomPinsListeners();
     attachAreaCheckboxListeners(this, (areaId, isVisible) => this._areaVisibilityChanged(areaId, isVisible));
     
-    // Sortiere die Area-Items nach displayOrder
     sortAreaItems(this);
     
-    // Drag & Drop Event Listener
     attachDragAndDropListeners(
       this,
       () => this._updateAreaOrder()
     );
     
-    // Expand Button Listener
     attachExpandButtonListeners(
       this,
       this._hass,
@@ -152,7 +143,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       (areaId, group, entityId, isVisible) => this._entityVisibilityChanged(areaId, group, entityId, isVisible)
     );
     
-    // Restore expanded state
     this._restoreExpandedState();
   }
 
@@ -163,24 +153,19 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       return;
     }
 
-    // Erstelle ha-entities-picker Element
     const picker = document.createElement('ha-entities-picker');
     
-    // Füge Picker zum Container hinzu
     container.innerHTML = '';
     container.appendChild(picker);
     
-    // Setze Properties nach einem kurzen Delay (gibt dem Element Zeit zu initialisieren)
     requestAnimationFrame(() => {
       picker.hass = this._hass;
       picker.value = favoriteEntities || [];
       
-      // Setze Attribute
       picker.setAttribute('label', 'Favoriten-Entitäten');
       picker.setAttribute('placeholder', 'Entität hinzufügen...');
       picker.setAttribute('allow-custom-entity', '');
       
-      // Event Listener für Änderungen
       picker.addEventListener('value-changed', (e) => {
         e.stopPropagation();
         this._favoriteEntitiesChanged(e.detail.value);
@@ -188,6 +173,55 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       
       console.log('Favorites picker created:', picker);
     });
+  }
+
+  _attachPowerFlowCardConfigListener() {
+    const textarea = this.querySelector('#power-flow-card-config');
+    const errorEl = this.querySelector('#power-flow-card-config-error');
+
+    if (!textarea) {
+      return;
+    }
+
+    const save = () => {
+      this._powerFlowCardConfigChanged(textarea.value, errorEl);
+    };
+
+    textarea.addEventListener('change', save);
+    textarea.addEventListener('blur', save);
+  }
+
+  _powerFlowCardConfigChanged(value, errorEl) {
+    if (!this._config || !this._hass) {
+      return;
+    }
+
+    try {
+      const trimmed = (value || '').trim();
+
+      const newConfig = {
+        ...this._config
+      };
+
+      if (!trimmed) {
+        delete newConfig.power_flow_card_config;
+      } else {
+        newConfig.power_flow_card_config = JSON.parse(trimmed);
+      }
+
+      if (errorEl) {
+        errorEl.style.display = 'none';
+        errorEl.textContent = '';
+      }
+
+      this._config = newConfig;
+      this._fireConfigChanged(newConfig);
+    } catch (err) {
+      if (errorEl) {
+        errorEl.textContent = `Ungültiges JSON: ${err.message}`;
+        errorEl.style.display = 'block';
+      }
+    }
   }
 
   _attachSummariesColumnsListener() {
@@ -221,7 +255,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       summaries_columns: columns
     };
 
-    // Wenn der Standardwert (2) gesetzt ist, entfernen wir die Property
     if (columns === 2) {
       delete newConfig.summaries_columns;
     }
@@ -249,7 +282,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       alarm_entity: entityId
     };
 
-    // Wenn leer, entfernen wir die Property
     if (!entityId || entityId === '') {
       delete newConfig.alarm_entity;
     }
@@ -259,7 +291,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
   }
 
   _attachFavoritesListeners() {
-    // Add Button
     const addBtn = this.querySelector('#add-favorite-btn');
     const select = this.querySelector('#favorite-entity-select');
     
@@ -268,12 +299,11 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
         const entityId = select.value;
         if (entityId && entityId !== '') {
           this._addFavoriteEntity(entityId);
-          select.value = ''; // Reset selection
+          select.value = '';
         }
       });
     }
 
-    // Remove Buttons
     const removeButtons = this.querySelectorAll('.remove-favorite-btn');
     removeButtons.forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -290,7 +320,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
 
     const currentFavorites = this._config.favorite_entities || [];
     
-    // Prüfe ob bereits vorhanden
     if (currentFavorites.includes(entityId)) {
       return;
     }
@@ -305,7 +334,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
     this._config = newConfig;
     this._fireConfigChanged(newConfig);
     
-    // Re-render nur die Favoriten-Liste
     this._updateFavoritesList();
   }
 
@@ -322,7 +350,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       favorite_entities: newFavorites.length > 0 ? newFavorites : undefined
     };
 
-    // Entferne Property wenn leer
     if (newFavorites.length === 0) {
       delete newConfig.favorite_entities;
     }
@@ -330,7 +357,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
     this._config = newConfig;
     this._fireConfigChanged(newConfig);
     
-    // Re-render nur die Favoriten-Liste
     this._updateFavoritesList();
   }
 
@@ -341,15 +367,12 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
     const favoriteEntities = this._config.favorite_entities || [];
     const allEntities = this._getAllEntitiesForSelect();
     
-    // Importiere die Render-Funktion
     import('./editor/simon42-editor-template.js').then(module => {
       container.innerHTML = module.renderFavoritesList?.(favoriteEntities, allEntities) || 
                           this._renderFavoritesListFallback(favoriteEntities, allEntities);
       
-      // Reattach listeners
       this._attachFavoritesListeners();
     }).catch(() => {
-      // Fallback falls Import fehlschlägt
       container.innerHTML = this._renderFavoritesListFallback(favoriteEntities, allEntities);
       this._attachFavoritesListeners();
     });
@@ -384,7 +407,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
   }
 
   _attachRoomPinsListeners() {
-    // Add Button
     const addBtn = this.querySelector('#add-room-pin-btn');
     const select = this.querySelector('#room-pin-entity-select');
     
@@ -393,12 +415,11 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
         const entityId = select.value;
         if (entityId && entityId !== '') {
           this._addRoomPinEntity(entityId);
-          select.value = ''; // Reset selection
+          select.value = '';
         }
       });
     }
 
-    // Remove Buttons
     const removeButtons = this.querySelectorAll('.remove-room-pin-btn');
     removeButtons.forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -415,7 +436,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
 
     const currentPins = this._config.room_pin_entities || [];
     
-    // Prüfe ob bereits vorhanden
     if (currentPins.includes(entityId)) {
       return;
     }
@@ -430,7 +450,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
     this._config = newConfig;
     this._fireConfigChanged(newConfig);
     
-    // Re-render nur die Raum-Pins-Liste
     this._updateRoomPinsList();
   }
 
@@ -447,7 +466,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       room_pin_entities: newPins.length > 0 ? newPins : undefined
     };
 
-    // Entferne Property wenn leer
     if (newPins.length === 0) {
       delete newConfig.room_pin_entities;
     }
@@ -455,7 +473,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
     this._config = newConfig;
     this._fireConfigChanged(newConfig);
     
-    // Re-render nur die Raum-Pins-Liste
     this._updateRoomPinsList();
   }
 
@@ -469,15 +486,12 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       a.name.localeCompare(b.name)
     );
     
-    // Importiere die Render-Funktion
     import('./editor/simon42-editor-template.js').then(module => {
       container.innerHTML = module.renderRoomPinsList?.(roomPinEntities, allEntities, allAreas) || 
                           this._renderRoomPinsListFallback(roomPinEntities, allEntities, allAreas);
       
-      // Reattach listeners
       this._attachRoomPinsListeners();
     }).catch(() => {
-      // Fallback falls Import fehlschlägt
       container.innerHTML = this._renderRoomPinsListFallback(roomPinEntities, allEntities, allAreas);
       this._attachRoomPinsListeners();
     });
@@ -524,7 +538,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
     const entities = Object.values(this._hass.entities || {});
     const devices = Object.values(this._hass.devices || {});
     
-    // Erstelle Device-zu-Area Map für Lookup
     const deviceAreaMap = new Map();
     devices.forEach(device => {
       if (device.area_id) {
@@ -537,7 +550,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
         const state = this._hass.states[entityId];
         const entity = entities.find(e => e.entity_id === entityId);
         
-        // Ermittle area_id: Entweder direkt oder über Device
         let areaId = entity?.area_id;
         if (!areaId && entity?.device_id) {
           areaId = deviceAreaMap.get(entity.device_id);
@@ -547,13 +559,12 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
           entity_id: entityId,
           name: state.attributes?.friendly_name || entityId.split('.')[1].replace(/_/g, ' '),
           area_id: areaId,
-          device_area_id: areaId // Für Backward-Kompatibilität
+          device_area_id: areaId
         };
       })
       .sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  // Kann weg?
   _favoriteEntitiesChanged(entities) {
     if (!this._config || !this._hass) {
       return;
@@ -566,7 +577,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       favorite_entities: entities
     };
 
-    // Wenn leer, entfernen wir die Property
     if (!entities || entities.length === 0) {
       delete newConfig.favorite_entities;
     }
@@ -576,7 +586,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
   }
 
   _restoreExpandedState() {
-    // Restore expanded areas
     this._expandedAreas.forEach(areaId => {
       const button = this.querySelector(`.expand-button[data-area-id="${areaId}"]`);
       const content = this.querySelector(`.area-content[data-area-id="${areaId}"]`);
@@ -585,7 +594,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
         content.style.display = 'block';
         button.classList.add('expanded');
         
-        // Restore expanded groups for this area
         const expandedGroups = this._expandedGroups.get(areaId);
         if (expandedGroups) {
           expandedGroups.forEach(groupKey => {
@@ -629,7 +637,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       show_weather: showWeather
     };
 
-    // Wenn der Standardwert (true) gesetzt ist, entfernen wir die Property
     if (showWeather === true) {
       delete newConfig.show_weather;
     }
@@ -648,7 +655,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       show_energy: showEnergy
     };
 
-    // Wenn der Standardwert (true) gesetzt ist, entfernen wir die Property
     if (showEnergy === true) {
       delete newConfig.show_energy;
     }
@@ -667,7 +673,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       show_search_card: showSearchCard
     };
 
-    // Wenn der Standardwert (false) gesetzt ist, entfernen wir die Property
     if (showSearchCard === false) {
       delete newConfig.show_search_card;
     }
@@ -686,7 +691,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       show_summary_views: showSummaryViews
     };
 
-    // Wenn der Standardwert (false) gesetzt ist, entfernen wir die Property
     if (showSummaryViews === false) {
       delete newConfig.show_summary_views;
     }
@@ -705,7 +709,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       show_room_views: showRoomViews
     };
 
-    // Wenn der Standardwert (false) gesetzt ist, entfernen wir die Property
     if (showRoomViews === false) {
       delete newConfig.show_room_views;
     }
@@ -722,10 +725,8 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
     let hiddenAreas = [...(this._config.areas_display?.hidden || [])];
     
     if (isVisible) {
-      // Entferne aus hidden
       hiddenAreas = hiddenAreas.filter(id => id !== areaId);
     } else {
-      // Füge zu hidden hinzu
       if (!hiddenAreas.includes(areaId)) {
         hiddenAreas.push(areaId);
       }
@@ -739,12 +740,10 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       }
     };
 
-    // Entferne hidden array wenn leer
     if (newConfig.areas_display.hidden.length === 0) {
       delete newConfig.areas_display.hidden;
     }
 
-    // Entferne areas_display wenn leer
     if (Object.keys(newConfig.areas_display).length === 0) {
       delete newConfig.areas_display;
     }
@@ -758,7 +757,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       return;
     }
 
-    // Hole aktuelle groups_options für dieses Areal
     const currentAreaOptions = this._config.areas_options?.[areaId] || {};
     const currentGroupsOptions = currentAreaOptions.groups_options || {};
     const currentGroupOptions = currentGroupsOptions[group] || {};
@@ -766,13 +764,7 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
     let hiddenEntities = [...(currentGroupOptions.hidden || [])];
     
     if (entityId === null) {
-      // Alle Entities in der Gruppe
-      // Wenn isVisible = false, alle Entities zur Hidden-Liste hinzufügen
-      // Wenn isVisible = true, alle Entities aus Hidden-Liste entfernen
-      
       if (!isVisible) {
-        // Hole alle Entities in dieser Gruppe und füge sie zu hidden hinzu
-        // Dies erfordert Zugriff auf die Entity-Liste, die wir aus dem DOM lesen können
         const entityList = this.querySelector(`.entity-list[data-area-id="${areaId}"][data-group="${group}"]`);
         if (entityList) {
           const entityCheckboxes = entityList.querySelectorAll('.entity-checkbox');
@@ -780,7 +772,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
           hiddenEntities = [...new Set([...hiddenEntities, ...allEntities])];
         }
       } else {
-        // Entferne alle Entities dieser Gruppe aus hidden
         const entityList = this.querySelector(`.entity-list[data-area-id="${areaId}"][data-group="${group}"]`);
         if (entityList) {
           const entityCheckboxes = entityList.querySelectorAll('.entity-checkbox');
@@ -789,25 +780,20 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
         }
       }
     } else {
-      // Einzelne Entity
       if (isVisible) {
-        // Entferne aus hidden
         hiddenEntities = hiddenEntities.filter(e => e !== entityId);
       } else {
-        // Füge zu hidden hinzu
         if (!hiddenEntities.includes(entityId)) {
           hiddenEntities.push(entityId);
         }
       }
     }
 
-    // Baue neue Config
     const newGroupOptions = {
       ...currentGroupOptions,
       hidden: hiddenEntities
     };
 
-    // Entferne hidden wenn leer
     if (newGroupOptions.hidden.length === 0) {
       delete newGroupOptions.hidden;
     }
@@ -817,7 +803,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       [group]: newGroupOptions
     };
 
-    // Entferne group wenn leer
     if (Object.keys(newGroupsOptions[group]).length === 0) {
       delete newGroupsOptions[group];
     }
@@ -827,7 +812,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       groups_options: newGroupsOptions
     };
 
-    // Entferne groups_options wenn leer
     if (Object.keys(newAreaOptions.groups_options).length === 0) {
       delete newAreaOptions.groups_options;
     }
@@ -837,7 +821,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       [areaId]: newAreaOptions
     };
 
-    // Entferne area wenn leer
     if (Object.keys(newAreasOptions[areaId]).length === 0) {
       delete newAreasOptions[areaId];
     }
@@ -847,7 +830,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       areas_options: newAreasOptions
     };
 
-    // Entferne areas_options wenn leer
     if (Object.keys(newConfig.areas_options).length === 0) {
       delete newConfig.areas_options;
     }
@@ -856,7 +838,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
     this._fireConfigChanged(newConfig);
   }
 
-  // Für Bereiche nach Etage anzeigen
   _groupByFloorsChanged(groupByFloors) {
     if (!this._config || !this._hass) {
       return;
@@ -867,7 +848,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       group_by_floors: groupByFloors
     };
 
-    // Wenn der Standardwert (false) gesetzt ist, entfernen wir die Property
     if (groupByFloors === false) {
       delete newConfig.group_by_floors;
     }
@@ -886,7 +866,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
       show_covers_summary: showCoversSummary
     };
 
-    // Wenn der Standardwert (true) gesetzt ist, entfernen wir die Property
     if (showCoversSummary === true) {
       delete newConfig.show_covers_summary;
     }
@@ -896,7 +875,6 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
   }
 
   _fireConfigChanged(config) {
-    // Setze Flag, damit setConfig() nicht erneut rendert
     this._isUpdatingConfig = true;
     this._config = config;
     
@@ -907,12 +885,10 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
     });
     this.dispatchEvent(event);
     
-    // Reset Flag nach einem Tick
     setTimeout(() => {
       this._isUpdatingConfig = false;
     }, 0);
   }
 }
 
-// Registriere Custom Element
 customElements.define("simon42-dashboard-strategy-editor", Simon42DashboardStrategyEditor);
