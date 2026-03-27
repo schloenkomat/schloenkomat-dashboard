@@ -3,11 +3,31 @@
 // ====================================================================
 // HTML-Template für den Dashboard Strategy Editor
 
-export function renderEditorHTML({ allAreas, hiddenAreas, areaOrder, showEnergy, showWeather, showSummaryViews, showRoomViews, showSearchCard, hasSearchCardDeps, summariesColumns, alarmEntity, alarmEntities, favoriteEntities, roomPinEntities, allEntities, groupByFloors, showCoversSummary, powerFlowCardConfigText }) {
+export function renderEditorHTML({
+  allAreas,
+  hiddenAreas,
+  areaOrder,
+  showEnergy,
+  showWeather,
+  showSummaryViews,
+  showRoomViews,
+  showSearchCard,
+  hasSearchCardDeps,
+  summariesColumns,
+  alarmEntity,
+  alarmEntities,
+  favoriteEntities,
+  roomPinEntities,
+  allEntities,
+  groupByFloors,
+  showCoversSummary,
+  energyDashboardMode,
+  powerFlowCardConfigText
+}) {
   return `
     <div class="card-config">
       <div class="section">
-        <div class="section-title">TEST 123</div>
+        <div class="section-title">Info-Karten</div>
         <div class="form-row">
           <input 
             type="checkbox" 
@@ -19,6 +39,7 @@ export function renderEditorHTML({ allAreas, hiddenAreas, areaOrder, showEnergy,
         <div class="description">
           Zeigt die Wettervorhersage-Karte in der Übersicht an, wenn eine Wetter-Entität verfügbar ist.
         </div>
+
         <div class="form-row">
           <input 
             type="checkbox" 
@@ -28,27 +49,61 @@ export function renderEditorHTML({ allAreas, hiddenAreas, areaOrder, showEnergy,
           <label for="show-energy">Energie-Dashboard anzeigen</label>
         </div>
         <div class="description">
-          Zeigt die Energie-Verteilungskarte in der Übersicht an, wenn Energiedaten verfügbar sind.
+          Zeigt wahlweise das normale Energy-Dashboard oder eine Power-Flow-Card in der Übersicht an.
+        </div>
+
+        <div class="form-row" id="energy-dashboard-mode-row" style="display: none; margin-top: 12px;">
+          <label for="energy-dashboard-mode" style="margin-right: 8px; min-width: 140px;">Energie-Dashboard:</label>
+          <select
+            id="energy-dashboard-mode"
+            style="flex: 1; padding: 8px; border-radius: 4px; border: 1px solid var(--divider-color); background: var(--card-background-color); color: var(--primary-text-color);"
+          >
+            <option value="energy_distribution" ${energyDashboardMode === 'energy_distribution' ? 'selected' : ''}>
+              Energy dashboard
+            </option>
+            <option value="power_flow_card" ${energyDashboardMode === 'power_flow_card' ? 'selected' : ''}>
+              Power Flow Card
+            </option>
+          </select>
+        </div>
+
+        <div class="description" id="energy-dashboard-mode-description" style="margin-left: 0; margin-top: 8px;">
+          Wähle aus, ob das normale Home-Assistant-Energy-Dashboard oder die Power Flow Card angezeigt werden soll.
         </div>
       </div>
 
-      <div class="section">
+      <div class="section" id="power-flow-card-editor-wrapper" style="display: none;">
         <div class="section-title">Power Flow Card</div>
         <div class="description" style="margin-left: 0; margin-bottom: 12px;">
-          JSON-Konfiguration für <code>custom:power-flow-card-plus</code>. Diese Konfiguration wird als <code>power_flow_card_config</code> gespeichert und in der Übersicht verwendet, wenn Energie aktiviert ist.
+          Bearbeite hier die Konfiguration der <code>custom:power-flow-card-plus</code>.
         </div>
-        <div class="form-row" style="display: block;">
-          <textarea
-            id="power-flow-card-config"
-            style="width: 100%; min-height: 320px; padding: 8px; border-radius: 4px; border: 1px solid var(--divider-color); background: var(--card-background-color); color: var(--primary-text-color); font-family: monospace; font-size: 13px; box-sizing: border-box;"
-            spellcheck="false"
-          >${powerFlowCardConfigText || '{}'}</textarea>
-        </div>
+
+        <div id="power-flow-card-editor-container" style="margin-bottom: 12px;"></div>
+
         <div
-          id="power-flow-card-config-error"
+          id="power-flow-card-editor-error"
           class="description"
-          style="display: none; color: var(--error-color); margin-left: 0; margin-top: 8px;"
+          style="display: none; color: var(--error-color); margin-left: 0; margin-bottom: 12px;"
         ></div>
+
+        <div id="power-flow-card-config-fallback" style="display: none;">
+          <div class="description" style="margin-left: 0; margin-bottom: 12px;">
+            Der grafische Editor der Power Flow Card ist nicht verfügbar. Du kannst die Konfiguration unten direkt als JSON bearbeiten.
+          </div>
+
+          <div class="form-row" style="display: block;">
+            <textarea
+              id="power-flow-card-config"
+              style="width: 100%; min-height: 320px; padding: 8px; border-radius: 4px; border: 1px solid var(--divider-color); background: var(--card-background-color); color: var(--primary-text-color); font-family: monospace; font-size: 13px; box-sizing: border-box;"
+              spellcheck="false"
+            >${powerFlowCardConfigText || '{}'}</textarea>
+          </div>
+          <div
+            id="power-flow-card-config-error"
+            class="description"
+            style="display: none; color: var(--error-color); margin-left: 0; margin-top: 8px;"
+          ></div>
+        </div>
       </div>
 
       <div class="section">
@@ -238,7 +293,7 @@ function renderFavoritesList(favoriteEntities, allEntities) {
 
   return `
     <div style="border: 1px solid var(--divider-color); border-radius: 4px; overflow: hidden;">
-      ${favoriteEntities.map((entityId, index) => {
+      ${favoriteEntities.map((entityId) => {
         const name = entityMap.get(entityId) || entityId;
         return `
           <div class="favorite-item" data-entity-id="${entityId}" style="display: flex; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--divider-color); background: var(--card-background-color);">
@@ -267,7 +322,7 @@ export function renderRoomPinsList(roomPinEntities, allEntities, allAreas) {
 
   return `
     <div style="border: 1px solid var(--divider-color); border-radius: 4px; overflow: hidden;">
-      ${roomPinEntities.map((entityId, index) => {
+      ${roomPinEntities.map((entityId) => {
         const entity = entityMap.get(entityId);
         const name = entity?.name || entityId;
         const areaId = entity?.area_id || entity?.device_area_id;
