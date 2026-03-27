@@ -17,7 +17,7 @@ import {
   sortAreaItems
 } from './editor/schloenkomat-editor-handlers.js';
 
-class Simon42DashboardStrategyEditor extends HTMLElement {
+class SchloenkomatDashboardStrategyEditor extends HTMLElement {
   constructor() {
     super();
     this._expandedAreas = new Set();
@@ -1080,5 +1080,3 @@ class Simon42DashboardStrategyEditor extends HTMLElement {
 }
 
 customElements.define("schloenkomat-dashboard-strategy-editor", Simon42DashboardStrategyEditor);
-
-wie muss die jetzt sein?

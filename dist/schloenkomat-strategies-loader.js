@@ -16,7 +16,6 @@ import './cards/schloenkomat-covers-group-card.js';
 
 // Lade Core-Modul
 import './core/schloenkomat-dashboard-strategy.js';
-import './core/schloenkomat-dashboard-strategy-editor.js';
 
 // Lade View-Module
 import './views/schloenkomat-view-room.js';
