@@ -268,7 +268,7 @@ export function createAreasSection(visibleAreas, groupByFloors = false, hass = n
  * @param {boolean} groupByFloors - Ob nach Etagen gruppiert wird
  * @returns {Array|Object|null} Section(s) oder null wenn keine Karten angezeigt werden
  */
-export function createWeatherEnergySection(weatherEntity, showWeather, showEnergy, groupByFloors = false) {
+export function createWeatherEnergySection(weatherEntity, showWeather, showEnergy, groupByFloors = false, config = {}) {
   // Wenn Etagen-Gruppierung aktiv: Separate Sections zurückgeben
   if (groupByFloors) {
     const sections = [];
@@ -300,13 +300,13 @@ export function createWeatherEnergySection(weatherEntity, showWeather, showEnerg
         cards: [
           {
             type: "heading",
-            heading: "Energie",
+            heading: "Energiefluss",
             heading_style: "title",
-            icon: "mdi:lightning-bolt"
+            icon: "mdi:solar-power"
           },
           {
-            type: "energy-distribution",
-            link_dashboard: true
+            type: "custom:power-flow-card-plus",
+            ...(config.power_flow_card_config || {})
           }
         ]
       });
@@ -338,13 +338,13 @@ export function createWeatherEnergySection(weatherEntity, showWeather, showEnerg
   if (showEnergy) {
     cards.push({
       type: "heading",
-      heading: "Energie",
+      heading: "Energiefluss",
       heading_style: "title",
-      icon: "mdi:lightning-bolt"
+      icon: "mdi:solar-power"
     });
     cards.push({
-      type: "energy-distribution",
-      link_dashboard: true
+      type: "custom:power-flow-card-plus",
+      ...(config.power_flow_card_config || {})
     });
   }
   
