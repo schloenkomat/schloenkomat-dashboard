@@ -1,2 +1,2 @@
 // Entry point for HACS - loads the main loader
-import './simon42-strategies-loader.js';
+import './schloenkomat-strategies-loader.js';
